@@ -1,13 +1,19 @@
 what happens after voting pod deletion.
-	[Answer] When voting pod is deleted, entire is working as fine. Because of replicas an new voting pod created and webpage will able to show the voting page. 
+	[Answer] When voting pod is deleted, entire system is working fine, because replicas will create new voting pod and webpage will able to show the voting page.
+		There might be issue when new pod is coming up during that time if any request come to open the web page then that webpage will not up, beacuse pod 
+		is not yet up. 
 
 what happens after worker pod deletion.
 	[Answer] When worker pod is deleted, entire system is working fine, because replicas will create new worker pod and start connecting db pod and redius pod to
-		receive and send the data to db.
+		receive and send the data to db. During worker pod is coming up, redius module is acting as a queue mechanism and store the value, what ever comes from
+		web page. When worker pod is up it pull all the data from redius and push to the DB.
 	
 what happens after db pod deletion.
 	[Answer] When db pod deleted, then system will bring up by replicas, but the data inside the data base is deleted because data is inside the pod. Now after db
 		pod comes up again, still not able to update the result at result pod. Because in result pod socket communication is using to receive data from the db
 		pod, which result socket file descripter is point to old db pod info. To resolve this issue either we have to delete the result pod so that when again it
-		comes up, socket will again sync with the db pod and file decripter will update. or avaoid to use soccket communication. 
+		comes up, socket will again sync with the db pod and file decripter will update. or avaoid to use socket communication. 
+		
+		There will be one more observation, when db pod is down, worker pod is trying to push data but not able to push which result worker pod got exited, so 
+		becuase of that there is one restart counter will be there for worker pod.
 	
